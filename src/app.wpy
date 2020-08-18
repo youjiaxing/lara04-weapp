@@ -1,10 +1,13 @@
 <style lang="less">
+    @import (css) './assets/style/app.wxss';
 
+    .page {
+        background-color: #ffffff;
+    }
 </style>
 
 <script>
     import wepy from '@wepy/core'
-    import eventHub from './common/eventHub'
     import vuex from '@wepy/x'
 
     wepy.use(vuex)
@@ -12,9 +15,7 @@
     wepy.app({
         onLaunch(options) {
         },
-        methods: {
-
-        }
+        methods: {}
     })
 </script>
 <config>

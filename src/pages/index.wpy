@@ -1,87 +1,58 @@
 <style lang="less">
-    input {
-        border: unit(1, rpx) solid #ccc;
-        display: inline-block;
-        width: unit(1, rpx);
-        border-radius: unit(1, rpx);
-    }
 
-    .info {
-        padding-right: unit(1, rpx);
-    }
-
-    .userinfo {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .userinfo-avatar {
-        width: unit(1, rpx);
-        height: unit(1, rpx);
-        border-radius: 50%;
-    }
-
-    .userinfo-nickname {
-        color: #aaa;
-    }
-
-    .slide {
-        width: unit(1, rpx);
-        display: flex;
-        border: unit(1, rpx) solid #ccc;
-        font-size: unit(1, rpx);
-        align-items: center;
-        box-sizing: border-box;
-
-        .left {
-            width: unit(1, rpx);
-            padding: unit(1, rpx);
-        }
-
-        .right {
-            display: flex;
-
-            .right-item {
-                padding: unit(1, rpx) unit(1, rpx);
-                background-color: red;
-                color: #fff;
-            }
-
-        }
-    }
 </style>
-<wxs module="m1" lang="babel">
-    const getTime = (time) => {
-        let date = getDate(time);
-        let hour = date.getHours();
-        let mins = date.getMinutes();
-        let sec = date.getSeconds();
-        let milli = date.getMilliseconds();
-        return `${hour}:${mins}:${sec}.${milli}`;
-    }
-    module.exports.getTime = getTime;
-</wxs>
+
 <template>
-    <view class="container">
-        首页话题列表
-    </view>
+    <div class="page">
+        <div class="page__bd">
+            <div class="weui-panel weui-panel_access">
+                <div class="weui-panel__hd">话题列表</div>
+                <div class="weui-panel__bd">
+                    <div v-for="topic in topics">
+                        <a url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                            <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                                <image class="weui-media-box__thumb" src="https://cdn.learnku.com/uploads/avatars/3995_1516760409.jpg?imagediv2/1/w/200/h/200" />
+                            </div>
+                            <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                                <div class="weui-media-box__title">{{ topic.title }}</div>
+                                <div class="weui-media-box__desc">{{ topic.body }}</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
     import wepy from '@wepy/core'
 
-    wepy.page({})
+    wepy.page({
+        data: {
+            topics: [
+                {
+                    id: 1,
+                    title: '测试1',
+                    body: 'larabbs 测试内容1'
+                }, {
+                    id: 2,
+                    title: '测试2',
+                    body: 'larabbs 测试内容2'
+                }, {
+                    id: 3,
+                    title: '测试3',
+                    body: 'larabbs 测试内容3'
+                }, {
+                    id: 4,
+                    title: '测试4',
+                    body: 'larabbs 测试内容4'
+                }
+            ]
+        }
+    })
 </script>
 <config>
     {
-        navigationBarTitleText: 'WePY 2.0 Feature Demo',
-        usingComponents: {
-            panel: '~@/components/panel',
-            counter: '~counter',
-            list: '../components/list',
-            group: '../components/group',
-            "slide-view": "module:miniprogram-slide-view",
-        }
     }
 </config>
