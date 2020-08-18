@@ -1,0 +1,19 @@
+<style lang="less">
+
+</style>
+
+<template>
+    <view class="container">
+        我的页面
+    </view>
+</template>
+
+<script>
+    import wepy from '@wepy/core'
+
+    wepy.page({})
+</script>
+
+<config>
+    {}
+</config>
