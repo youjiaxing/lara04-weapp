@@ -3,17 +3,47 @@
 </style>
 
 <template>
-    <view class="container">
-        我的页面
-    </view>
+    <div class="page">
+        <div class="page__bd">
+            <div class="weui-panel weui-panel_access">
+                <div class="weui-panel__hd" v-if="loggedIn">
+                    已登录
+                </div>
+                <div v-else>
+                    <a class="weui-cell weui-cell_access" url="/pages/auth/login">
+                        <div class="weui-cell__bd">未登录</div>
+                        <div class="weui-cell_access weui-cell__ft"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
     import wepy from '@wepy/core'
 
-    wepy.page({})
+    wepy.page({
+        data: {
+            loggedIn: false
+        },
+        methods: {
+
+        },
+        onShow() {
+            if (wx.getStorageSync('access_token') && wx.getStorageSync('access_token_expired_at') > new Date().getTime()) {
+                this.loggedIn = true
+            } else {
+                console.log("未登录")
+            }
+
+            console.log('loggedIn: ', this.loggedIn)
+        }
+    })
 </script>
 
 <config>
-    {}
+    {
+        navigationBarTitleText: '我的'
+    }
 </config>

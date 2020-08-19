@@ -16,7 +16,6 @@
 
     wepy.app({
         onLaunch(options) {
-
             wepy.wx.login().then(res => {
                 console.log('login: ', res)
             })
@@ -28,7 +27,8 @@
     {
         pages: [
             'pages/index',
-            'pages/user'
+            'pages/user',
+            'pages/auth/login'
         ],
         window: {
             backgroundTextStyle: 'light',
