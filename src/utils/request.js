@@ -72,7 +72,46 @@ async function authRequest(url, options = {}, showLoading = true) {
     return await request(url, options, showLoading)
 }
 
+async function uploadFile(url, options = {}, showLoading = true) {
+    if (showLoading) {
+        wx.showLoading({title: "上传中"})
+    }
+
+    let uploadResp
+    try {
+        await checkToken()
+
+        options.url = host + url
+        _.set(options, "header.Authorization", 'Bearer ' + store.getters.accessToken)
+
+        // console.log("uploadFile", options)
+
+        uploadResp = await wepy.wx.uploadFile(options)
+
+        // console.log("uploadResp", uploadResp)
+    } finally {
+        if (showLoading) {
+            wx.hideLoading()
+        }
+    }
+
+    if (_.inRange(uploadResp.statusCode, 200, 299)) {
+        return uploadResp
+    }
+
+    const error = new Error(uploadResp.data.message)
+    error.response = uploadResp
+
+    wx.showModal({
+        title: "提示",
+        content: "服务器错误, 请联系管理员或重试"
+    })
+
+    return Promise.reject(error)
+}
+
 export {
     request,
-    authRequest
+    authRequest,
+    uploadFile,
 }

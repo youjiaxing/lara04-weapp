@@ -6,11 +6,30 @@
     .error-message {
         color: #E64340;
     }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+        border-radius: 50%;
+    }
+
+    .avatar-wrap {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 <template>
     <div class="page">
         <div class="page__bd">
+            <!--头像-->
+            <div class="avatar-wrap">
+                <image class="avatar" :src="form.avatar" @tap="uploadAvatar"/>
+            </div>
+
             <!-- 填写姓名 -->
             <div class="weui-cells__title" :class="{'weui-cell_warn': errors.name}">姓名</div>
             <div class="weui-cells weui-cells_after-title">
@@ -70,6 +89,7 @@
     import {mapGetters} from '@wepy/x'
     import WeValidator from 'we-validator'
     import _ from 'lodash'
+    import userApi from '@/api/user'
 
     wepy.page({
         store,
@@ -86,7 +106,7 @@
             this.initValidator()
         },
         onShow() {
-            this.form = _.pick(this.user, ['name', 'email', 'introduction']);
+            this.form = _.pick(this.user, ['name', 'email', 'introduction', 'avatar']);
         },
         methods: {
             initValidator() {
@@ -124,6 +144,27 @@
                     }
                 })
             },
+            async uploadAvatar() {
+                try {
+                    // 选择头像图片
+                    let image = await wepy.wx.chooseImage({count: 1})
+                    // 获取选择图片本地地址
+                    let avatar = image.tempFilePaths[0]
+
+                    let uploadRawResp = await userApi.uploadAvatar(avatar)
+                    console.log("uploadRawResp", uploadRawResp)
+                    // 小程序上传结果没有做 JSON.parse，需要手动处理
+                    let uploadResp = JSON.parse(uploadRawResp.data)
+                    console.log("uploadResp", uploadResp)
+
+                    this.form = _.assign(this.form, {
+                        avatar: uploadResp.path,
+                        avatar_image_id: uploadResp.id
+                    })
+                } catch (e) {
+                    console.log(e)
+                }
+            },
             async submit() {
                 // 表单验证
                 if (!this.validator.checkData(this.form)) {
@@ -134,7 +175,7 @@
                 let updateResp
                 try {
                     console.log("updateUser", this.form)
-                    updateResp = this.$store.dispatch('updateUser', this.form)
+                    updateResp = await this.$store.dispatch('updateUser', this.form)
                 } catch (e) {
                     if (e.response.statusCode === 422) {
                         this.errors = e.response.data.errors
@@ -144,11 +185,14 @@
                             icon: "none"
                         })
                     }
+                    console.log(e)
+                    return
                 }
 
                 wx.showToast({
                     title: "修改成功",
                     icon: "success",
+                    duration: 2000
                 })
             },
         }
