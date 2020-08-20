@@ -34,6 +34,50 @@
             </div>
             <div v-if="errors.phone" class="weui-cells__tips error-message">{{ errors.phone[0] }}</div>
 
+            <!-- 短信验证码  -->
+            <div class="weui-cells__title" :class="{'weui-cell_warn': errors.verification_code}">短信验证码</div>
+            <div class="weui-cells weui-cells_after-title">
+                <div class="weui-cell weui-cell_input" :class="{'weui-cell_warn': errors.verification_code}">
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" v-model="form.verification_code" placeholder="请输入短信验证码" name="verification_code"/>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <icon v-if="errors.verification_code" type="warn" size="23" color="#E64340"></icon>
+                    </div>
+                </div>
+            </div>
+            <div v-if="errors.verification_code" class="weui-cells__tips error-message">{{ errors.verification_code[0] }}</div>
+
+            <!-- 姓名 -->
+            <div class="weui-cells__title" :class="{'weui-cell_warn': errors.name}">姓名</div>
+            <div class="weui-cells weui-cells_after-title">
+                <div class="weui-cell weui-cell_input" :class="{'weui-cell_warn': errors.name}">
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" placeholder="请输入姓名" name="name" v-model="form.name"/>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <icon v-if="errors.name" type="warn" size="23" color="#E64340"></icon>
+                    </div>
+                </div>
+            </div>
+            <div v-if="errors.name" class="weui-cells__tips error-message">{{ errors.name[0] }}</div>
+
+            <!-- 密码 -->
+            <div class="weui-cells__title" :class="{'weui-cell_warn': errors.password}">密码</div>
+            <div class="weui-cells weui-cells_after-title">
+                <div class="weui-cell weui-cell_input" :class="{'weui-cell_warn': errors.password}">
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" v-model="form.password" placeholder="请输入密码" name="password" type="password"/>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <icon v-if="errors.password" type="warn" size="23" color="#E64340"></icon>
+                    </div>
+                </div>
+            </div>
+            <div v-if="errors.password" class="weui-cells__tips error-message">{{ errors.password[0] }}</div>
+
+
+            <!-- 注册按钮 -->
             <div class="weui-btn-area">
                 <button class="weui-btn" type="primary" @tap="submit">注册</button>
             </div>
@@ -59,14 +103,17 @@
     import wepy from '@wepy/core'
     import authApi from '@/api/auth'
     import WeValidator from 'we-validator'
+    import store from '@/store'
     import _ from 'lodash'
 
     wepy.page({
+        store,
         data: {
             // 表单
             form: {
                 phone: '',
             },
+            errorMessage: "",
             errors: {},                 // 表单错误
             captchaModalShow: false,    // 是否显示验证码输入模态框
             captchaValue: "",           // 图形验证码 input
@@ -78,30 +125,79 @@
             phoneDisabled: false,
         },
         onReady() {
-            this.phoneValidatorInstance = new WeValidator({
-                rule: {
-                    phone: {
-                        required: true,
-                        mobile: true
-                    }
-                },
-                messages: {
-                    phone: {
-                        required: "请输入手机号",
-                        mobile: "手机号格式不争取"
-                    }
-                },
-                onMessage(data) {
-                    this.$set(this.errors, data.name, [data.msg])
-                }
-            })
+            this.initValidator()
         },
         methods: {
+            initValidator() {
+                this.phoneValidatorInstance = new WeValidator({
+                        rules: {
+                            phone: {
+                                required: true,
+                                mobile: true
+                            }
+                        },
+                        messages: {
+                            phone: {
+                                required: "请输入手机号",
+                                mobile: "手机号格式不争取"
+                            }
+                        },
+                        onMessage: (data) => {
+                            this.$set(this.errors, data.name, [data.msg])
+                        }
+                    }
+                )
+
+                this.formValidatorInstance = new WeValidator({
+                    multiCheck: true,
+                    rules: {
+                        phone: {
+                            required: true,
+                            mobile: true
+                        },
+                        verification_code: {
+                            required: true,
+                        },
+                        name: {
+                            required: true,
+                        },
+                        password: {
+                            required: true,
+                            minlength: 6
+                        }
+                    },
+                    messages: {
+                        phone: {
+                            required: '请输入手机号',
+                            mobile: '手机号格式不正确'
+                        },
+                        name: {
+                            required: '请输入姓名'
+                        },
+                        verification_code: {
+                            required: '请输入验证码'
+                        },
+                        password: {
+                            required: '请填写密码',
+                            minlength: '密码最少 6 位数'
+                        }
+                    },
+                    onMessage: (data) => {
+                        console.log("表单验证失败", data)
+                        let errors = {}
+                        _.forEach(data, (value, key) => {
+                            errors[key] = [value.msg]
+                        })
+                        this.errors = errors
+                    }
+                })
+            },
             // 更新图形验证码
             async getCaptchaCode() {
+                this.captchaValue = ''
                 // 验证手机号
                 if (!this.phoneValidatorInstance.checkData(this.form)) {
-                    return
+                    return false
                 }
 
                 let resp
@@ -112,10 +208,9 @@
                     if (e.response.statusCode === 422) {
                         this.errors = e.response.data.errors
                     }
-                    return
+                    return false
                 }
 
-                this.captchaValue = ''
                 this.captcha = {
                     key: resp.data.captcha_key,
                     imageContent: resp.data.captcha_image_content,
@@ -123,6 +218,11 @@
                 }
                 // 显示模态框
                 this.captchaModalShow = true;
+
+                // debug
+                if (resp.data.code) {
+                    this.captchaValue = resp.data.code
+                }
             },
             // 请求短信验证码
             async sendVerificationCode() {
@@ -131,13 +231,13 @@
                     this.$set(this.errors, "captchaValue", ["验证码已过期, 请重新输入"])
                     this.captchaValue = ""
                     this.getCaptchaCode()
-                    return
+                    return false
                 }
 
                 // 是否输入图片验证码
                 if (!this.captchaValue) {
                     this.$set(this.errors, "captchaValue", ['请输入验证码'])
-                    return
+                    return false
                 }
 
                 // 发起请求
@@ -148,7 +248,7 @@
                     this.$set(this.errors, "captchaValue", [e.response.data.message])
                     // 重新请求验证码
                     this.getCaptchaCode()
-                    return
+                    return false
                 }
 
                 // 记录key和时间
@@ -163,7 +263,61 @@
                 this.captchaModalShow = false
             },
             async submit() {
+                // 本地验证表单数据
+                this.errors = {}
+                if (!this.formValidatorInstance.checkData(this.form)) {
+                    return false
+                }
 
+                // 确认短信验证码
+                if (!this.verificationCode.key) {
+                    wx.showToast({
+                        title: "请获取短信验证码",
+                        icon: "none",
+                        duration: 2000,
+                    })
+                    return false;
+                }
+
+                // 确认短信验证码是否过期
+                if (this.verificationCode.expiredAt < new Date().getTime()) {
+                    wx.showToast({
+                        title: "短信验证码已过期",
+                        icon: "none",
+                        duration: 2000,
+                    })
+                    this.verificationCode = {}
+                    this.form.verification_code = ''
+                    return false
+                }
+
+                // 发起注册请求
+                let params = this.form
+                params['verification_key'] = this.verificationCode.key
+                let resp
+                try {
+                    resp = await this.$store.dispatch('register', params)
+                } catch (e) {
+                    if (e.response.statusCode === 422) {
+                        this.errors = e.response.data.errors
+                    } else {
+                        this.errorMessage = _.get(e, "response.data.message", "未知错误")
+                    }
+                    return false
+                }
+
+                // 注册成功
+                wx.showToast({
+                    title: "注册成功",
+                    icon: "success"
+                })
+
+                // 跳转回我的页面
+                setTimeout(async () => {
+                    wx.switchTab({
+                        url: '/pages/user'
+                    })
+                }, 2000)
             },
         }
     })

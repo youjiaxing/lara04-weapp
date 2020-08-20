@@ -73,6 +73,14 @@ let actions = {
         await authApi.logout()
         authUtil.logout()
         commit('resetState')
+    },
+    async register({dispatch}, params = {}) {
+        const loginData = await wepy.wx.login()
+        params.code = loginData.code
+
+        await authApi.register(params)
+
+        await dispatch('login')
     }
 }
 
