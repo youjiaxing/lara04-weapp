@@ -69,9 +69,13 @@
             },
             errors: {},                 // 表单错误
             captchaModalShow: false,    // 是否显示验证码输入模态框
-            captchaValue: "",           // 图形验证码
+            captchaValue: "",           // 图形验证码 input
             // 图形验证码信息
-            captcha: {}
+            captcha: {},
+            // 短信验证码信息
+            verificationCode: {},
+            // 是否允许输入/修改手机号
+            phoneDisabled: false,
         },
         onReady() {
             this.phoneValidatorInstance = new WeValidator({
@@ -111,6 +115,7 @@
                     return
                 }
 
+                this.captchaValue = ''
                 this.captcha = {
                     key: resp.data.captcha_key,
                     imageContent: resp.data.captcha_image_content,
@@ -120,10 +125,44 @@
                 this.captchaModalShow = true;
             },
             // 请求短信验证码
-            sendVerificationCode() {
-                //
+            async sendVerificationCode() {
+                // 图片验证码是否过期
+                if (this.captcha.expiredAt < new Date().getTime()) {
+                    this.$set(this.errors, "captchaValue", ["验证码已过期, 请重新输入"])
+                    this.captchaValue = ""
+                    this.getCaptchaCode()
+                    return
+                }
+
+                // 是否输入图片验证码
+                if (!this.captchaValue) {
+                    this.$set(this.errors, "captchaValue", ['请输入验证码'])
+                    return
+                }
+
+                // 发起请求
+                let resp
+                try {
+                    resp = await authApi.verifyCode(this.captcha.key, this.captchaValue)
+                } catch (e) {
+                    this.$set(this.errors, "captchaValue", [e.response.data.message])
+                    // 重新请求验证码
+                    this.getCaptchaCode()
+                    return
+                }
+
+                // 记录key和时间
+                this.verificationCode = {
+                    key: resp.data.key,
+                    expiredAt: Date.parse(resp.data.expired_at)
+                }
+
+                // 关闭模态
+                this.errors = {}
+                this.phoneDisabled = false
+                this.captchaModalShow = false
             },
-            submit() {
+            async submit() {
 
             },
         }
