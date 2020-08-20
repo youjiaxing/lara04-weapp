@@ -4,6 +4,14 @@ function me() {
     return authRequest('user');
 }
 
+function update(data) {
+    return authRequest('user', {
+        method: 'PUT',
+        data: data
+    })
+}
+
 export default {
-    me
+    me,
+    update
 }

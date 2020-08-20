@@ -26,10 +26,13 @@
 <config>
     {
         pages: [
-            'pages/index',
             'pages/user',
+            'pages/index',
+
             'pages/auth/login',
             'pages/auth/register',
+            'pages/users/me',
+            'pages/users/edit',
         ],
         window: {
             backgroundTextStyle: 'light',

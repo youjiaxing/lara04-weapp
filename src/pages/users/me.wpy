@@ -1,0 +1,27 @@
+<style lang="less"></style>
+
+<template>
+
+</template>
+<script>
+    import wepy from '@wepy/core'
+    import store from '@/store/index'
+    import {mapGetters} from '@wepy/x'
+
+    wepy.page({
+        store,
+        computed:{
+            ...mapGetters([
+                'user'
+            ])
+        },
+        onShow() {
+            if (!this.$store.getters.isLoggedIn) {
+            }
+        }
+    })
+
+</script>
+<config>
+    {navigationBarTitleText: '我的'}
+</config>

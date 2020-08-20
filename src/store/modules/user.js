@@ -81,6 +81,12 @@ let actions = {
         await authApi.register(params)
 
         await dispatch('login')
+    },
+    async updateUser({dispatch, commit}, params) {
+        const updateResp = await userApi.update(params)
+
+        commit('setUser', updateResp.data)
+        authUtil.setUser(updateResp.data)
     }
 }
 

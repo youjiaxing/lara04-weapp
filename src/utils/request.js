@@ -33,16 +33,21 @@ async function request(url, options = {}, showLoading = true) {
         return resp;
     }
 
+    const error = new Error(resp.data.message)
+    error.response = resp
+    error.handled = false
+
     if (resp.statusCode === 429) {
+        error.handled = true
         wx.showModal({title: '提示', content: '请求太频繁, 请稍后再试'})
     }
 
     if (resp.statusCode >= 500) {
+        error.handled = true
         wx.showModal({title: '提示', content: '服务器错误, 请联系管理员或重试'})
     }
 
-    const error = new Error(resp.data.message)
-    error.response = resp
+
     return Promise.reject(error)
 }
 
