@@ -47,7 +47,9 @@ let actions = {
         }
         params['code'] = loginData['code']
 
+        console.log("logining...")
         const loginResp = await authApi.login(params)
+        console.log("login success")
         commit("setToken", loginResp.data)
         authUtil.setToken(loginResp.data)
 

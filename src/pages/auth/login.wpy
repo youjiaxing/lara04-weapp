@@ -133,7 +133,8 @@
         // 页面打开事件
         async onShow() {
             try {
-                this.$store.dispatch('login')
+                await this.$store.dispatch('login')
+                console.log("auto login success, navigate back")
                 wx.navigateBack()
             } catch (e) {
                 // 2002 是指未绑定账号

@@ -22,8 +22,39 @@ function logout() {
     })
 }
 
+function register(data) {
+    return request('weapp/users', {
+        method: 'POST',
+        data: data
+    })
+}
+
+// 图形验证码
+function captcha(phone) {
+    return request('captchas', {
+        method: 'POST',
+        data: {
+            phone
+        }
+    })
+}
+
+// 短信验证码
+function verifyCode(captcha_key, captcha_code) {
+    return request('verificationCodes', {
+        method: 'POST',
+        data: {
+            captcha_key,
+            captcha_code,
+        }
+    })
+}
+
 export default {
     login,
     refresh,
-    logout
+    logout,
+    captcha,
+    register,
+    verifyCode,
 }
