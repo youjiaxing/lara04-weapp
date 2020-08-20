@@ -1,4 +1,6 @@
 import wepy from '@wepy/core'
+import store from '@/store'
+import _ from 'lodash'
 
 // 服务器接口地址
 const host = "http://lara04.test/api/v1/"
@@ -10,7 +12,7 @@ const host = "http://lara04.test/api/v1/"
  * @param {boolean} showLoading
  * @returns {Promise<*>}
  */
-const request = async function (url, options = {}, showLoading = true) {
+async function request(url, options = {}, showLoading = true) {
     if (showLoading) {
         wx.showLoading({title: '加载中'})
     }
@@ -32,11 +34,11 @@ const request = async function (url, options = {}, showLoading = true) {
     }
 
     if (resp.statusCode === 429) {
-        wx.showModal({title:'提示', content:'请求太频繁, 请稍后再试'})
+        wx.showModal({title: '提示', content: '请求太频繁, 请稍后再试'})
     }
 
     if (resp.statusCode >= 500) {
-        wx.showModal({title: '提示', content:'服务器错误, 请联系管理员或重试'})
+        wx.showModal({title: '提示', content: '服务器错误, 请联系管理员或重试'})
     }
 
     const error = new Error(resp.data.message)
@@ -44,6 +46,28 @@ const request = async function (url, options = {}, showLoading = true) {
     return Promise.reject(error)
 }
 
+async function checkToken() {
+    const accessToken = store.getters.accessToken
+    const expiredAt = store.getters.accessTokenExpiredAt
+
+    if (accessToken && new Date().getTime() > expiredAt) {
+        try {
+            return store.dispatch("refresh")
+        } catch (e) {
+            return store.dispatch("login")
+        }
+    }
+}
+
+async function authRequest(url, options = {}, showLoading = true) {
+    await checkToken()
+
+    _.set(options, "header.Authorization", 'Bearer ' + store.getters.accessToken)
+
+    return await request(url, options, showLoading)
+}
+
 export {
-    request
+    request,
+    authRequest
 }

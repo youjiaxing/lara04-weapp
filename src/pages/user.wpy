@@ -7,7 +7,8 @@
         <div class="page__bd">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__hd" v-if="isLoggedIn">
-                    已登录
+                    已登录 {{ user.name }}
+                    <button type="warn" @click="logout">退出登录</button>
                 </div>
                 <div v-else>
                     <a class="weui-cell weui-cell_access" url="/pages/auth/login">
@@ -30,10 +31,19 @@
         data: {},
         computed: {
             ...mapGetters([
-                'isLoggedIn'
+                'isLoggedIn',
+                'user'
             ])
         },
-        methods: {},
+        methods: {
+            async logout() {
+                try{
+                    this.$store.dispatch("logout")
+                } catch (e) {
+
+                }
+            }
+        },
         onShow() {
             if (this.isLoggedIn) {
                 console.log('已登录')

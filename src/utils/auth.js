@@ -16,8 +16,8 @@ function getTokenExpiredAt() {
 
 function setToken(tokenPayload) {
     // 保存返回的凭证
-    wx.setStorageSync('access_token', tokenPayload.data.access_token)
-    wx.setStorageSync('access_token_expired_at', new Date().getTime() + tokenPayload.data.expires_in * 1000)
+    wx.setStorageSync('access_token', tokenPayload.access_token)
+    wx.setStorageSync('access_token_expired_at', new Date().getTime() + tokenPayload.expires_in * 1000)
 }
 
 function logout() {
