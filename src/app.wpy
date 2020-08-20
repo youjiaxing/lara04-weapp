@@ -20,7 +20,7 @@
                 console.log('login: ', res)
             })
         },
-        methods: {}
+        methods: {},
     })
 </script>
 <config>

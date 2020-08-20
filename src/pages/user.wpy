@@ -6,7 +6,7 @@
     <div class="page">
         <div class="page__bd">
             <div class="weui-panel weui-panel_access">
-                <div class="weui-panel__hd" v-if="loggedIn">
+                <div class="weui-panel__hd" v-if="isLoggedIn">
                     已登录
                 </div>
                 <div v-else>
@@ -22,22 +22,22 @@
 
 <script>
     import wepy from '@wepy/core'
+    import store from '@/store/index'
+    import {mapGetters} from '@wepy/x'
 
     wepy.page({
-        data: {
-            loggedIn: false
+        store,
+        data: {},
+        computed: {
+            ...mapGetters([
+                'isLoggedIn'
+            ])
         },
-        methods: {
-
-        },
+        methods: {},
         onShow() {
-            if (wx.getStorageSync('access_token') && wx.getStorageSync('access_token_expired_at') > new Date().getTime()) {
-                this.loggedIn = true
-            } else {
-                console.log("未登录")
+            if (this.isLoggedIn) {
+                console.log('已登录')
             }
-
-            console.log('loggedIn: ', this.loggedIn)
         }
     })
 </script>

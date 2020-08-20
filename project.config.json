@@ -1,7 +1,7 @@
 {
 	"description": "A WePy project",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"enhance": false,
 		"postcss": false,
