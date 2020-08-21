@@ -25,10 +25,95 @@
         background-color: #d8d8d8;
         float: right;
     }
+
+    /*分类*/
+    .weui-flex {
+        align-items: center;
+    }
+
+    .weui-cells {
+        margin-top: 0;
+        opacity: 0;
+        transition: .3s;
+
+        &:before, &:after {
+            display: none;
+        }
+
+        &_show {
+            opacity: 1;
+        }
+    }
+
+    .weui-cell {
+        &:before {
+            right: 15px;
+        }
+    }
+
+    .category-list__item {
+        margin: 10px 0;
+        background-color: #FFFFFF;
+        border-radius: 2px;
+        overflow: hidden;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .category-list__item_selected {
+        background-color: #eeeeee;
+    }
+
+    .category-list__img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .category-list__item-hd {
+        padding: 20px;
+        transition: opacity .3s;
+
+        &_show {
+            opacity: .4;
+        }
+    }
+
+    .category-list__item-bd {
+        height: 0;
+        overflow: hidden;
+
+        &_show {
+            height: auto;
+        }
+    }
 </style>
 
 <template>
     <div class="page">
+        <div class="category-list__item">
+            <div class="weui-flex category-list__item-hd" @tap="categorisToggle">
+                <div class="weui-flex__item page-title">{{ currentCategoryName }}</div>
+                <image class="category-list__img" src="/assets/images/category.png"/>
+            </div>
+            <div class="category-list__item-bd"
+                 :class="{'category-list__item-bd_show' : categoryOpen}">
+                <div class="weui-cells" :class="{ 'weui-cells_show' : categoryOpen }">
+                    <div @tap="changeCategory" class="weui-cell weui-cell_access" :class="{'category-list__item_selected' : !currentCategoryId }">
+                        <div class="weui-cell__bd">话题</div>
+                    </div>
+                    <div v-for="category in categories" :key="category.id">
+                        <div @tap="changeCategory(category)"
+                             class="weui-cell weui-cell_access"
+                             :class="{'category-list__item_selected': currentCategoryId == category.id}">
+                            <div class="weui-cell__bd">{{ category.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="page__bd">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__bd">
@@ -67,6 +152,13 @@
 
     wepy.page({
         data: {
+            // 分类
+            categories: [],
+            // 当前分类
+            currentCategory: {},
+            // 是否显示分类列表
+            categoryOpen: false,
+
             // 话题数据
             topics: [],
             // 当前分页
@@ -75,8 +167,14 @@
             noMoreData: false,
             // 是否加载中
             isLoading: false,
-            // 排序
-            //TODO
+        },
+        computed: {
+            currentCategoryId() {
+                return this.currentCategory.id || null
+            },
+            currentCategoryName() {
+                return this.currentCategory.name || '话题'
+            },
         },
         methods: {
             // 获取话题数据
@@ -85,20 +183,48 @@
                     this.page = 1
                 }
 
-                const resp = await topicApi.index({
+                let params = {
                     page: this.page,
                     include: 'user,category'
-                })
+                }
+                if (this.currentCategoryId) {
+                    params['filter[category_id]'] = this.currentCategoryId
+                }
+
+                const resp = await topicApi.index(params)
 
                 this.topics = reset ? resp.data.data : this.topics.concat(resp.data.data)
 
                 // 根据分页数据确认是否还有更多数据
                 const pagination = resp.data.meta
                 this.noMoreData = pagination.current_page === pagination.last_page
+            },
+            async loadCategories() {
+                // 优先从缓存中获取分类数据
+                let categories = wx.getStorageSync("categories")
+
+                if (!categories) {
+                    const resp = await topicApi.categories()
+                    categories = resp.data.data
+                    wx.setStorageSync("categories")
+                }
+
+                this.categories = categories
+            },
+            categorisToggle() {
+                this.categoryOpen = !this.categoryOpen
+            },
+            async changeCategory(category = {}) {
+                this.currentCategory = category
+                this.categoryOpen = false
+                this.page = 1
+
+                await this.loadTopics(true)
             }
         },
         async onLoad() {
-            await this.loadTopics()
+            this.loadTopics()
+            this.loadCategories()
         },
         // 下拉刷新
         async onPullDownRefresh() {
