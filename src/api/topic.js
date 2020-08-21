@@ -13,14 +13,15 @@ function categories() {
     })
 }
 
-function detail(id) {
+function topic(id, data) {
     return request('topics/' + id, {
-        method: 'GET'
+        method: 'GET',
+        data
     })
 }
 
 export default {
     index,
-    detail,
+    topic,
     categories
 }
