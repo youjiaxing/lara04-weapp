@@ -20,8 +20,16 @@ function topic(id, data) {
     })
 }
 
+function userTopics(userId, data) {
+    return request('users/' + userId + '/topics', {
+        method: 'GET',
+        data
+    })
+}
+
 export default {
     index,
     topic,
-    categories
+    categories,
+    userTopics,
 }

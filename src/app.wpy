@@ -28,11 +28,11 @@
         pages: [
             'pages/topics/index',
             'pages/topics/show',
+            'pages/topics/user-index',
 
             'pages/auth/login',
             'pages/auth/register',
 
-            'pages/user',
             'pages/users/me',
             'pages/users/edit',
         ],
@@ -51,7 +51,7 @@
                     selectedIconPath: 'assets/images/index_selected.png'
                 },
                 {
-                    pagePath: 'pages/user',
+                    pagePath: 'pages/users/me',
                     text: '我的',
                     iconPath: 'assets/images/user.png',
                     selectedIconPath: 'assets/images/user_selected.png'

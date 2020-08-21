@@ -1,0 +1,95 @@
+<style lang="less">
+    .page {
+        background-color: #FFFFFF;
+    }
+
+    .avatar-wrap {
+        position: relative;
+        margin-right: 10px;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        display: block;
+        border-radius: 50%;
+    }
+
+    .topic-title {
+        padding: 15px;
+    }
+</style>
+<template>
+    <div class="page">
+        <div class="page__bd">
+            <topic-list :topics="topics" :no-more-data="noMoreData"></topic-list>
+        </div>
+    </div>
+</template>
+
+<script>
+    import wepy from '@wepy/core'
+    import topicApi from '@/api/topic'
+    import _ from 'lodash'
+
+    wepy.page({
+        data: {
+            userId: 0,
+            topics: [],
+            noMoreData: false,
+            isLoading: false,
+            page: 1,
+        },
+        computed: {},
+        methods: {
+            async loadTopics(reset = false) {
+                if (reset) {
+                    this.page = 1
+                    this.noMoreData = false
+                }
+
+                let params = {
+                    page: this.page,
+                    include: 'user,category',
+                    'filter[withOrder]': 'recent'
+                }
+                let resp = await topicApi.userTopics(this.userId, params)
+                let meta = resp.data.meta
+
+                this.noMoreData = meta.current_page === meta.last_page
+                this.topics = reset ? resp.data.data : this.topics.concat(resp.data.data)
+            }
+        },
+        async onLoad(options) {
+            this.userId = options.id
+            this.loadTopics(true)
+        },
+        async onShow() {
+
+        },
+        async onPullDownRefresh() {
+            await this.loadTopics(true)
+            wx.stopPullDownRefresh()
+        },
+        async onReachBottom() {
+            if (this.noMoreData || this.isLoading) {
+                return
+            }
+
+            this.isLoading = true
+            this.page++
+            await this.loadTopics()
+            this.isLoading = false
+        }
+    })
+</script>
+
+<config>
+    {
+        navigationBarTitleText: '用户话题列表',
+        enablePullDownRefresh: true,
+        usingComponents: {
+            "topic-list": "~@/components/topic-list"
+        }
+    }
+</config>
