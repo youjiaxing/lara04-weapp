@@ -43,7 +43,9 @@
                                 <div class="weui-media-box__info topic-info">
                                     <div class="weui-media-box__info__meta">{{ topic.category.name }} •</div>
                                     <div class="weui-media-box__info__meta">{{ topic.user.name }} •</div>
-                                    <div class="weui-media-box__info__meta">{{ topic.updated_at }}</div>
+                                    <div class="weui-media-box__info__meta">
+                                        <datetime-diff :datetime="topic.updated_at"></datetime-diff>
+                                    </div>
                                 </div>
                             </div>
                             <div class="weui-badge reply-count">{{ topic.reply_count }}</div>
@@ -122,6 +124,8 @@
     {
         navigationBarTitleText: '帖子',
         enablePullDownRefresh: true,
-        //        onReachBottomDistance: ,
+        usingComponents: {
+            "datetime-diff": "~@/components/datetime-diff"
+        }
     }
 </config>
