@@ -26,11 +26,12 @@
 <config>
     {
         pages: [
-            'pages/user',
-            'pages/index',
+            'pages/topics/index',
 
             'pages/auth/login',
             'pages/auth/register',
+
+            'pages/user',
             'pages/users/me',
             'pages/users/edit',
         ],
@@ -43,7 +44,7 @@
         tabBar: {
             list: [
                 {
-                    pagePath: 'pages/index',
+                    pagePath: 'pages/topics/index',
                     text: '首页',
                     iconPath: 'assets/images/index.png',
                     selectedIconPath: 'assets/images/index_selected.png'
