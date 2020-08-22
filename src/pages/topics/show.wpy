@@ -18,6 +18,10 @@
     .topic-title {
         padding: 15px;
     }
+
+    .delete-button {
+        margin-top: 15px;
+    }
 </style>
 <template>
     <div class="page">
@@ -46,20 +50,34 @@
             </div>
             <div class="weui-article">
                 <rich-text :nodes="topic.body"></rich-text>
+                <button v-if="canDelete" @tap="deleteTopic" class="weui-btn weui-btn_mini delete-button" type="default" size="mini">删除</button>
             </div>
         </div>
     </div>
 </template>
 <script>
     import wepy from '@wepy/core'
+    import {mapGetters} from '@wepy/x'
     import topicApi from '@/api/topic'
     import _ from 'lodash'
+    import store from '@/store'
+    import eventHub from '@/common/eventHub'
 
     wepy.page({
+        store,
         data: {
             topic: null,
         },
-        computed: {},
+        computed: {
+            ...mapGetters(['user', 'isLoggedIn']),
+            canDelete() {
+                if (!this.isLoggedIn || !this.topic) {
+                    return false
+                }
+
+                return this.topic.user_id === this.user.id
+            }
+        },
         methods: {
             // 获取话题详情
             async loadTopic(id) {
@@ -68,10 +86,35 @@
                 })
 
                 this.topic = resp.data
-            }
+            },
+            async deleteTopic() {
+                const confirm = await wepy.wx.showModal({
+                    title: '确认删除',
+                    content: '您确认删除话题吗',
+                    confirmText: '删除',
+                    cancelText: '取消'
+                })
+
+                if (!confirm) {
+                    return
+                }
+
+                let resp = await topicApi.destroy(this.topic.id)
+
+                wx.showToast({
+                    title: '删除成功',
+                    icon: 'success',
+                })
+
+                setTimeout(() => {
+                    eventHub.$emit('topic-deleted', this.topic);
+                    wx.navigateBack()
+                }, 2000)
+            },
         },
         async onLoad(options) {
             this.loadTopic(options.id)
+            this.canDelete = this.$store.user && this.$store.user.id === this.topic.user_id
         },
         async onShow() {
 

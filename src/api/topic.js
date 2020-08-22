@@ -1,4 +1,4 @@
-import {request} from "@/utils/request";
+import {authRequest, request} from "@/utils/request";
 
 function index(data = {}) {
     return request('topics', {
@@ -27,9 +27,16 @@ function userTopics(userId, data) {
     })
 }
 
+function destroy(id) {
+    return authRequest('topics/' + id, {
+        method: 'DELETE'
+    })
+}
+
 export default {
     index,
     topic,
     categories,
     userTopics,
+    destroy,
 }

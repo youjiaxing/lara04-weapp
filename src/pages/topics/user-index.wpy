@@ -32,6 +32,7 @@
     import topicApi from '@/api/topic'
     import _ from 'lodash'
     import listRefresh from '@/mixins/list-refresh'
+    import eventHub from "@/common/eventHub";
 
     wepy.page({
         mixins: [listRefresh],
@@ -52,6 +53,12 @@
         async onLoad(options) {
             this.userId = options.id
             this.loadData(true)
+
+            eventHub.$on('topic-deleted', (topic) => {
+                this.page = 1
+                this.noMoreData = false
+                this.loadData(true)
+            })
         },
         async onShow() {
 
