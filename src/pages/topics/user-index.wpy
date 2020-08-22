@@ -22,7 +22,7 @@
 <template>
     <div class="page">
         <div class="page__bd">
-            <topic-list :topics="topics" :no-more-data="noMoreData"></topic-list>
+            <topic-list :topics="resourceData" :no-more-data="noMoreData"></topic-list>
         </div>
     </div>
 </template>
@@ -31,56 +31,31 @@
     import wepy from '@wepy/core'
     import topicApi from '@/api/topic'
     import _ from 'lodash'
+    import listRefresh from '@/mixins/list-refresh'
 
     wepy.page({
+        mixins: [listRefresh],
         data: {
             userId: 0,
-            topics: [],
-            noMoreData: false,
-            isLoading: false,
-            page: 1,
         },
         computed: {},
         methods: {
-            async loadTopics(reset = false) {
-                if (reset) {
-                    this.page = 1
-                    this.noMoreData = false
-                }
-
+            async fetchData() {
                 let params = {
                     page: this.page,
                     include: 'user,category',
                     'filter[withOrder]': 'recent'
                 }
-                let resp = await topicApi.userTopics(this.userId, params)
-                let meta = resp.data.meta
-
-                this.noMoreData = meta.current_page === meta.last_page
-                this.topics = reset ? resp.data.data : this.topics.concat(resp.data.data)
+                return await topicApi.userTopics(this.userId, params)
             }
         },
         async onLoad(options) {
             this.userId = options.id
-            this.loadTopics(true)
+            this.loadData(true)
         },
         async onShow() {
 
         },
-        async onPullDownRefresh() {
-            await this.loadTopics(true)
-            wx.stopPullDownRefresh()
-        },
-        async onReachBottom() {
-            if (this.noMoreData || this.isLoading) {
-                return
-            }
-
-            this.isLoading = true
-            this.page++
-            await this.loadTopics()
-            this.isLoading = false
-        }
     })
 </script>
 
