@@ -35,6 +35,7 @@
 
             'pages/users/me',
             'pages/users/edit',
+            'pages/users/show',
         ],
         window: {
             backgroundTextStyle: 'light',

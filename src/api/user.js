@@ -1,4 +1,4 @@
-import {authRequest, uploadFile} from "@/utils/request";
+import {authRequest, request, uploadFile} from "@/utils/request";
 
 function me() {
     return authRequest('user');
@@ -22,8 +22,13 @@ function uploadAvatar(avatar) {
     })
 }
 
+function user(userId) {
+    return request('users/' + userId)
+}
+
 export default {
     me,
     update,
-    uploadAvatar
+    uploadAvatar,
+    user
 }
