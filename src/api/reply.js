@@ -7,6 +7,14 @@ function index(topicId, data) {
     })
 }
 
+function userIndex(userId, data) {
+    return request('users/' + userId + '/replies', {
+        method: 'GET',
+        data: data
+    })
+}
+
 export default {
-    index
+    index,
+    userIndex
 }

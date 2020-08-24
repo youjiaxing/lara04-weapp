@@ -1,25 +1,24 @@
-<style lang="less">
-
-</style>
+<style lang="less"></style>
 <template>
-    <div class="page__bd">
-        <reply-list :replies="resourceData" :noMoreData="noMoreData"></reply-list>
+    <div class="page">
+        <div class="page__bd">
+            <reply-list :replies="resourceData" :noMoreData="noMoreData"></reply-list>
+        </div>
     </div>
 </template>
-
 <script>
     import wepy from '@wepy/core'
-    import topicApi from '@/api/reply'
     import listRefresh from '@/mixins/list-refresh'
+    import replyApi from '@/api/reply'
     import eventHub from "@/common/eventHub";
 
     wepy.page({
         mixins: [listRefresh],
         data: {
-            topicId: null,
+            userId: null
         },
         onLoad(query) {
-            this.topicId = query.topic_id
+            this.userId = query.user_id
             this.loadData(true)
 
             eventHub.$on('reply-deleted', (reply) => {
@@ -28,22 +27,19 @@
         },
         methods: {
             async fetchData() {
-                let params = {
+                return await replyApi.userIndex(this.userId, {
                     page: this.page,
-                    include: 'user',
-                }
-                return await topicApi.index(this.topicId, params)
+                    include: 'user'
+                })
             }
         }
     })
 </script>
-
 <config>
     {
-        navigationBarTitleText: '话题回复列表',
+        navigationBarTitleText: '用户回复列表',
         enablePullDownRefresh: true,
         usingComponents: {
-            "datetime-diff": "~@/components/datetime-diff",
             "reply-list": "~@/components/reply-list",
         }
     }
