@@ -57,6 +57,16 @@
             <div class="page__bd">
                 <reply-list :replies="topic.top_replies" :no-more-data="noMoreData"></reply-list>
             </div>
+
+            <div class="weui-panel__ft">
+                <a class="weui-cell weui-cell_access weui-cell_link" url="/pages/replies/index?topic_id={{ topic.id }}">
+                    <div class="weui-cell__bd">查看全部回复</div>
+                    <div class="weui-cell__ft weui-cell__ft_in-access"></div>
+                </a>
+            </div>
+
+            <!--话题回复入口-->
+            <reply-create-link :topicId="topic.id"></reply-create-link>
         </div>
     </div>
 </template>
@@ -120,6 +130,15 @@
         async onLoad(options) {
             this.loadTopic(options.id)
             this.canDelete = this.$store.user && this.$store.user.id === this.topic.user_id
+
+            eventHub.$on('reply-created', (reply) => {
+                console.log('on reply-created', reply)
+
+                if (reply.topic_id !== this.topicId) {
+                    return
+                }
+                this.loadTopic(this.topicId)
+            })
         },
         async onShow() {
 
@@ -132,6 +151,7 @@
         usingComponents: {
             "datetime-diff": "~@/components/datetime-diff",
             "reply-list": "~@/components/reply-list",
+            "reply-create-link": "~@/components/reply-create-link",
         }
     }
 </config>

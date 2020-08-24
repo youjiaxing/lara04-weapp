@@ -5,6 +5,9 @@
     <div class="page__bd">
         <reply-list :replies="resourceData" :noMoreData="noMoreData"></reply-list>
     </div>
+
+    <!--话题回复-->
+    <reply-create-link :topicId="topicId"></reply-create-link>
 </template>
 
 <script>
@@ -24,6 +27,13 @@
 
             eventHub.$on('reply-deleted', (reply) => {
                 this.resourceData = this.resourceData.filter((v) => v.id !== reply.id)
+            })
+
+            eventHub.$on('reply-created', (reply) => {
+                if (reply.topic_id !== this.topicId) {
+                    return
+                }
+                this.resourceData.unshift(reply)
             })
         },
         methods: {
@@ -45,6 +55,7 @@
         usingComponents: {
             "datetime-diff": "~@/components/datetime-diff",
             "reply-list": "~@/components/reply-list",
+            "reply-create-link": "~@/components/reply-create-link",
         }
     }
 </config>

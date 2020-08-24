@@ -1,4 +1,4 @@
-import {request} from "@/utils/request";
+import {authRequest, request} from "@/utils/request";
 
 function index(topicId, data) {
     return request('topics/' + topicId + '/replies', {
@@ -14,7 +14,15 @@ function userIndex(userId, data) {
     })
 }
 
+function store(topicId, data) {
+    return authRequest('topics/' + topicId + '/replies', {
+        method: 'POST',
+        data: data
+    })
+}
+
 export default {
     index,
-    userIndex
+    userIndex,
+    store
 }

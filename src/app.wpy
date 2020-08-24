@@ -32,6 +32,7 @@
 
             'pages/replies/index',
             'pages/replies/user-index',
+            'pages/replies/create',
 
             'pages/auth/login',
             'pages/auth/register',

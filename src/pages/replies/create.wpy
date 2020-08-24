@@ -1,0 +1,96 @@
+<style lang="less">
+    .content {
+        height: 5.3em;
+    }
+</style>
+
+<template>
+    <div class="page__bd">
+        <div class="weui-cells__title">评论内容({{contentLength}}/{{contentLimit}})</div>
+        <div class="weui-cells weui-cells_after-title">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <textarea class="weui-textarea content" placeholder="请输入评论内容" v-model="form.content"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="weui-btn-area">
+            <button class="weui-btn" type="primary" @tap="submit">提交</button>
+        </div>
+    </div>
+</template>
+
+<script>
+    import wepy from '@wepy/core'
+    import replyApi from '@/api/reply'
+    import _ from 'lodash'
+    import store from '@/store'
+    import {mapGetters} from '@wepy/x'
+    import eventHub from "@/common/eventHub";
+
+
+    wepy.page({
+        store,
+        data: {
+            topicId: null,
+            form: {
+                content: "",
+            },
+            contentLimit: 80,
+        },
+        computed: {
+            ...mapGetters(['isLoggedIn']),
+            contentLength() {
+                return this.form.content.length
+            }
+        },
+        onLoad(query) {
+            if (!this.isLoggedIn) {
+                wx.navigateTo({
+                    url: '/pages/auth/login',
+                })
+            }
+
+            this.topicId = query.topic_id
+        },
+        onReady() {
+        },
+        onShow() {
+
+        },
+        methods: {
+
+            async submit() {
+                if (!this.form.content) {
+                    wx.showToast({
+                        title: '请填写内容',
+                        icon: 'none',
+                        duration: 2000
+                    })
+                    return
+                }
+
+                const resp = await replyApi.store(this.topicId, {
+                    content: this.form.content
+                })
+
+                wx.showToast({
+                    title: '发布成功',
+                    icon: 'success',
+                })
+
+                setTimeout(function () {
+                    console.log('emit reply-created', resp.data)
+                    eventHub.$emit('reply-created', resp.data)
+                    wx.navigateBack();
+                }, 2000)
+            },
+        }
+    })
+</script>
+<config>
+    {
+        navigationBarTitleText: '添加回复',
+    }
+</config>
