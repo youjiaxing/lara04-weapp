@@ -9,7 +9,7 @@ export default {
         isLoading: false
     },
     async onPullDownRefresh() {
-        await loadData(true)
+        await this.loadData(true)
         this.page++
         this.noMoreData = false
         wx.stopPullDownRefresh()

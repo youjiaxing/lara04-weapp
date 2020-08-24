@@ -30,6 +30,8 @@
             'pages/topics/show',
             'pages/topics/user-index',
 
+            'pages/replies/index',
+
             'pages/auth/login',
             'pages/auth/register',
 
