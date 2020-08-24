@@ -24,6 +24,12 @@
             eventHub.$on('reply-deleted', (reply) => {
                 this.resourceData = this.resourceData.filter((v) => v.id !== reply.id)
             })
+
+            eventHub.$on('reply-deleted', (reply) => {
+                this.resourceData = this.resourceData.filter((v) => {
+                    return v.id !== reply.id
+                })
+            })
         },
         methods: {
             async fetchData() {

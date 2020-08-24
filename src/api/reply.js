@@ -21,8 +21,15 @@ function store(topicId, data) {
     })
 }
 
+function destroy(topicId, replyId) {
+    return authRequest(`topics/${topicId}/replies/${replyId}`, {
+        method: 'DELETE'
+    })
+}
+
 export default {
     index,
     userIndex,
-    store
+    store,
+    destroy
 }

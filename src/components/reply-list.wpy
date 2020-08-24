@@ -27,6 +27,7 @@
                             <datetime-diff :datetime="reply.created_at"></datetime-diff>
                         </div>
                     </div>
+                    <reply-delete :reply="reply"></reply-delete>
                 </div>
             </div>
             <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
@@ -47,7 +48,6 @@
             replies: Array,
             noMoreData: Boolean,
         },
-
     })
 
 </script>
@@ -55,7 +55,8 @@
 <config>
     {
         usingComponents: {
-            "datetime-diff": "~@/components/datetime-diff"
+            "datetime-diff": "~@/components/datetime-diff",
+            "reply-delete": "~@/components/reply-delete",
         }
     }
 </config>

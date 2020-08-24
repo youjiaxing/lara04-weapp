@@ -139,6 +139,12 @@
                 }
                 this.loadTopic(this.topicId)
             })
+
+            eventHub.$on('reply-deleted', (reply) => {
+                this.topic.top_replies = this.topic.top_replies.filter((v) => {
+                    return v.id !== reply.id
+                })
+            })
         },
         async onShow() {
 
