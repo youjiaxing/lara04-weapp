@@ -148,6 +148,12 @@
         },
         async onShow() {
 
+        },
+        onShareAppMessage(options) {
+            return {
+                title: this.topic.title,
+                path: '/pages/topics/show?id=' + this.topic.id,
+            }
         }
     })
 </script>

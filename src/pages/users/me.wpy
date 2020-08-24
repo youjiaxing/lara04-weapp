@@ -102,6 +102,13 @@
             }
         },
         onShow() {
+        },
+        onShareAppMessage(options) {
+            return {
+                title: this.user.name,
+                path: `/pages/users/show?id=${this.user.id}`,
+                imageUrl: this.user.avatar,
+            }
         }
     })
 </script>
