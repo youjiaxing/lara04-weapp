@@ -64,6 +64,13 @@ async function checkToken() {
     }
 }
 
+/**
+ *
+ * @param {string} url
+ * @param {RequestOption} options
+ * @param {boolean} showLoading
+ * @returns {Promise<*>}
+ */
 async function authRequest(url, options = {}, showLoading = true) {
     await checkToken()
 
