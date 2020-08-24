@@ -99,9 +99,13 @@
     import _ from 'lodash'
     import listRefresh from '@/mixins/list-refresh'
     import eventHub from "@/common/eventHub";
+    import syncBadge from '@/mixins/sync-badge'
+    import {mapGetters} from '@wepy/x'
+    import store from '@/store'
 
     wepy.page({
-        mixins: [listRefresh],
+        store,
+        mixins: [listRefresh, syncBadge],
         data: {
             // 分类
             categories: [],
@@ -111,6 +115,9 @@
             categoryOpen: false,
         },
         computed: {
+            ...mapGetters([
+                'unreadCount'
+            ]),
             currentCategoryId() {
                 return this.currentCategory.id || null
             },
