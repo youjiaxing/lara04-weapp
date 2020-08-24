@@ -26,9 +26,14 @@ function user(userId) {
     return request('users/' + userId)
 }
 
+function permissions() {
+    return authRequest('user/permissions')
+}
+
 export default {
     me,
     update,
     uploadAvatar,
-    user
+    user,
+    permissions
 }

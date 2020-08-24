@@ -10,6 +10,7 @@
     import wepy from '@wepy/core'
     import vuex from '@wepy/x'
     import promisify from '@wepy/use-promisify'
+    import _ from 'lodash'
 
     wepy.use(vuex)
     wepy.use(promisify)
@@ -27,6 +28,17 @@
         methods: {
             async updateUnreadCount() {
                 await this.$store.dispatch('updateUnreadCount')
+            },
+            can(targetPerm) {
+                if (!this.$store.getters.isLoggedIn) {
+                    return false
+                }
+
+                if (_.find(this.$store.getters.perms, (v) => v.name === targetPerm)) {
+                    return true
+                }
+
+                return false
             }
         },
     })
@@ -37,16 +49,12 @@
             'pages/topics/index',
             'pages/topics/show',
             'pages/topics/user-index',
-
             'pages/notifications/index',
-
             'pages/replies/index',
             'pages/replies/user-index',
             'pages/replies/create',
-
             'pages/auth/login',
             'pages/auth/register',
-
             'pages/users/me',
             'pages/users/edit',
             'pages/users/show',

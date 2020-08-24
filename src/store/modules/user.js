@@ -9,6 +9,7 @@ const getDefaultState = () => {
         user: authUtil.getUser(),
         accessToken: authUtil.getToken(),
         accessTokenExpiredAt: authUtil.getTokenExpiredAt(),
+        perms: authUtil.getPerms(),
     }
 }
 
@@ -21,6 +22,7 @@ let getters = {
     user: state => state.user,
     accessToken: state => state.accessToken,
     accessTokenExpiredAt: state => state.accessTokenExpiredAt,
+    perms: state => state.perms
 }
 
 // 定义 mutations
@@ -34,6 +36,9 @@ let mutations = {
     },
     resetState(state) {
         Object.assign(state, getDefaultState())
+    },
+    setPerms(state, perms) {
+        state.perms = perms
     }
 }
 
@@ -47,13 +52,10 @@ let actions = {
         }
         params['code'] = loginData['code']
 
-        console.log("logining...")
         const loginResp = await authApi.login(params)
-        console.log("login success")
         commit("setToken", loginResp.data)
         authUtil.setToken(loginResp.data)
 
-        console.log("login, then getUser")
         dispatch("getUser")
     },
     async refresh({dispatch, commit, state}) {
@@ -65,9 +67,15 @@ let actions = {
     },
     async getUser({dispatch, commit, state}) {
         let userResp = await userApi.me()
-        console.log("user", userResp.data)
         commit('setUser', userResp.data)
         authUtil.setUser(userResp.data)
+
+        dispatch('getPerms')
+    },
+    async getPerms({commit}, state) {
+        let resp = await userApi.permissions()
+        commit('setPerms', resp.data.data)
+        authUtil.setPerms(resp.data.data)
     },
     async logout({dispatch, commit}) {
         await authApi.logout()
@@ -87,7 +95,7 @@ let actions = {
 
         commit('setUser', updateResp.data)
         authUtil.setUser(updateResp.data)
-    }
+    },
 }
 
 export default {

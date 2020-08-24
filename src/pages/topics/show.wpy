@@ -90,7 +90,7 @@
                     return false
                 }
 
-                return this.topic.user_id === this.user.id
+                return this.topic.user_id === this.user.id || this.$app.can('manage_contents')
             }
         },
         methods: {

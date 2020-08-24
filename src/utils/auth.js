@@ -24,9 +24,13 @@ function logout() {
     return wx.clearStorage()
 }
 
-// function isLogged() {
-//     return getToken() && getTokenExpiredAt() > new Date().getTime();
-// }
+function getPerms() {
+    return wx.getStorageSync('perms')
+}
+
+function setPerms(perms) {
+    return wx.setStorageSync('perms', perms)
+}
 
 export default {
     getUser,
@@ -35,5 +39,6 @@ export default {
     setToken,
     getTokenExpiredAt,
     logout,
-    // isLogged
+    getPerms,
+    setPerms,
 }

@@ -32,7 +32,7 @@
                     return false
                 }
 
-                return this.reply.user_id === this.user.id
+                return this.reply.user_id === this.user.id || this.$app.can('manage_contents')
             }
         },
         methods: {
