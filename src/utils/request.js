@@ -3,7 +3,8 @@ import store from '@/store'
 import _ from 'lodash'
 
 // 服务器接口地址
-const host = "http://lara04.test/api/v1/"
+// const host = "http://lara04.test/api/v1/"
+const host = API_URL
 
 /**
  *

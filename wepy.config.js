@@ -1,38 +1,46 @@
 const path = require('path');
 var prod = process.env.NODE_ENV === 'production';
+const DefinePlugin = require('@wepy/plugin-define');
+const PluginUglifyjs = require('@wepy/plugin-uglifyjs');
 
 module.exports = {
-  wpyExt: '.wpy',
-  eslint: true,
-  cliLogs: !prod,
-  static: ['./src/assets'],
-  build: {
-  },
-  resolve: {
-    alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
-      '@': path.join(__dirname, 'src')
+    wpyExt: '.wpy',
+    eslint: true,
+    cliLogs: !prod,
+    static: ['./src/assets'],
+    build: {},
+    resolve: {
+        alias: {
+            counter: path.join(__dirname, 'src/components/counter'),
+            '@': path.join(__dirname, 'src')
+        },
+        aliasFields: ['wepy', 'weapp'],
+        modules: ['node_modules']
     },
-    aliasFields: ['wepy', 'weapp'],
-    modules: ['node_modules']
-  },
-  compilers: {
-    less: {
-      compress: prod
+    compilers: {
+        less: {
+            compress: prod
+        },
+        babel: {
+            sourceMap: true,
+            presets: [
+                '@babel/preset-env'
+            ],
+            plugins: [
+                '@wepy/babel-plugin-import-regenerator'
+            ]
+        }
     },
-    babel: {
-      sourceMap: true,
-      presets: [
-        '@babel/preset-env'
-      ],
-      plugins: [
-        '@wepy/babel-plugin-import-regenerator'
-      ]
+    plugins: [
+        DefinePlugin({
+            API_URL: prod ? '"https://lara04.test/api/v1/"' : '"http://lara04.test/api/v1/"',
+        }),
+        PluginUglifyjs({
+            // options
+        })
+    ],
+    appConfig: {
+        noPromiseAPI: ['createSelectorQuery']
     }
-  },
-  plugins: [],
-  appConfig: {
-    noPromiseAPI: ['createSelectorQuery']
-  }
 }
 

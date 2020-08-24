@@ -913,6 +913,16 @@
   dependencies:
     miniprogram-api-typings "^2.10.3-1"
 
+"@wepy/plugin-define@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npm.taobao.org/@wepy/plugin-define/download/@wepy/plugin-define-2.1.0.tgz#e83926ebda5ffb1a08ff77713a84fdbeb8d61b3e"
+  integrity sha1-6Dkm69pf+xoI/3dxOoT9vrjWGz4=
+
+"@wepy/plugin-uglifyjs@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npm.taobao.org/@wepy/plugin-uglifyjs/download/@wepy/plugin-uglifyjs-2.1.0.tgz#fb4a1bb85e1ddc6cf0317c45e275c62ea925d60b"
+  integrity sha1-+0obuF4d3GzwMXxF4nXGLqkl1gs=
+
 "@wepy/use-promisify@^2.1.0":
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/@wepy/use-promisify/download/@wepy/use-promisify-2.1.0.tgz#a6b9781082802d977de620ee760a5ab3a228b60a"
@@ -4655,6 +4665,11 @@ uglify-js@^3.1.4:
   version "3.10.1"
   resolved "https://registry.npm.taobao.org/uglify-js/download/uglify-js-3.10.1.tgz?cache=0&sync_timestamp=1596385322123&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuglify-js%2Fdownload%2Fuglify-js-3.10.1.tgz#dd14767eb7150de97f2573a5ff210db14fffe4ad"
   integrity sha1-3RR2frcVDel/JXOl/yENsU//5K0=
+
+uglify-js@^3.10.2:
+  version "3.10.2"
+  resolved "https://registry.npm.taobao.org/uglify-js/download/uglify-js-3.10.2.tgz?cache=0&sync_timestamp=1598210460949&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuglify-js%2Fdownload%2Fuglify-js-3.10.2.tgz#8cfa1209fd04199cc8a7f9930ddedb30b0f1912d"
+  integrity sha1-jPoSCf0EGZzIp/mTDd7bMLDxkS0=
 
 unbzip2-stream@^1.0.9:
   version "1.4.3"
